@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m160610_091226_uuid_event_table extends Migration
+class m160610_091326_uuid_param_table extends Migration
 {
     public function up()
     {
@@ -11,15 +11,12 @@ class m160610_091226_uuid_event_table extends Migration
         }
 
         $this->execute("
-            CREATE TABLE `uuid_event` (
-              `id` BIGINT(22) UNSIGNED NOT NULL AUTO_INCREMENT,
+            CREATE TABLE `uuid_param` (
               `uuid` BIGINT(22) UNSIGNED NOT NULL,
-              `action` CHAR(25) NOT NULL,
-              `target` BIGINT(22) NULL,
+              `param` CHAR(25) NOT NULL,
               `value` TEXT NULL,
               `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-              PRIMARY KEY (`id`),
-              INDEX `I_uuid_action_target` USING BTREE (`uuid` ASC, `action` ASC, `target` ASC))
+              PRIMARY KEY (`uuid`, `param`))
             ENGINE = MyISAM
             DEFAULT CHARACTER SET = utf8
             COLLATE = utf8_general_ci;

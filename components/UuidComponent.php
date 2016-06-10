@@ -28,9 +28,14 @@ class UuidComponent extends Component
     public $cookieParams = [];
 
     /**
-     * @var int Limit of action name length.
+     * @var int Limit of event action name length.
      */
-    public $actionNameLength = 25;
+    public $eventActionLength = 25;
+
+    /**
+     * @var int Limit of param name length.
+     */
+    public $paramLength = 25;
 
     private $_uuid;
 
@@ -40,11 +45,11 @@ class UuidComponent extends Component
      */
     public function getUuid()
     {
-        if($this->_uuid !== null) {
+        if ($this->_uuid !== null) {
             return $this->_uuid;
         }
 
-        if($uuid = Yii::$app->request->cookies->getValue($this->cookieName)) {
+        if ($uuid = Yii::$app->request->cookies->getValue($this->cookieName)) {
             $this->_uuid = (string) $uuid;
             return $this->_uuid;
         }
@@ -78,7 +83,7 @@ class UuidComponent extends Component
      */
     public function trackEvent($action, $target = null, $value = null)
     {
-        if(strlen($action) > $this->actionNameLength) {
+        if (strlen($action) > $this->eventActionLength) {
             throw new InvalidParamException('Action name is too long.');
         }
 
@@ -107,18 +112,102 @@ class UuidComponent extends Component
             ->from('uuid_event')
             ->where(['uuid' => $this->getUuid()]);
 
-        if($action !== false) {
+        if ($action !== false) {
             $query->andWhere(['action' => $action]);
         }
 
-        if($target !== false) {
+        if ($target !== false) {
             $query->andWhere(['target' => $target]);
         }
 
-        if($value !== false) {
+        if ($value !== false) {
             $query->andWhere(['value' => $value]);
         }
 
         return (int) $query->scalar();
+    }
+
+    /**
+     * Sets parameter for current user
+     * @param $param
+     * @param $value
+     * @throws \yii\db\Exception
+     */
+    public function setParam($param, $value)
+    {
+        if (strlen($param) > $this->paramLength) {
+            throw new InvalidParamException('Param name is too long.');
+        }
+
+        if (!is_scalar($value) && !is_null($value)) {
+            $value = serialize($value);
+        } else if (is_bool($value)) {
+            $value = (int) $value;
+        }
+
+        $columns = [
+            'uuid' => $this->getUuid(),
+            'param' => $param,
+            'value' => $value,
+            'datetime' => new Expression('NOW()'),
+        ];
+
+        if ($this->paramExists($param)) {
+            Yii::$app->db->createCommand()->update('uuid_param', $columns, [
+                'uuid' => $this->getUuid(),
+                'param' => $param,
+            ])->execute();
+        } else {
+            Yii::$app->db->createCommand()->insert('uuid_param', $columns)->execute();
+        }
+    }
+
+    /**
+     * Returns saved parameter value
+     * @param string $param
+     * @return bool|string
+     */
+    public function getParam($param)
+    {
+        $result = (new Query())
+            ->select('value')
+            ->from('uuid_param')
+            ->where([
+                'uuid' => $this->getUuid(),
+                'param' => $param,
+            ])
+            ->one();
+        return $result ? $result['value'] : null;
+    }
+
+    /**
+     * Checks whether parameters already set
+     * @param string $param
+     * @return bool|string
+     */
+    public function paramExists($param)
+    {
+        $result = (new Query())
+            ->select(new Expression('1'))
+            ->from('uuid_param')
+            ->where([
+                'uuid' => $this->getUuid(),
+                'param' => $param,
+            ])
+            ->scalar();
+        return $result;
+    }
+
+    /**
+     * Remover parameter
+     * @param string $param
+     * @throws \yii\db\Exception
+     */
+    public function removeParam($param)
+    {
+        Yii::$app->db->createCommand()->delete('uuid_param', [
+            'uuid' => $this->getUuid(),
+            'param' => $param,
+        ])->execute();
     }
 }
