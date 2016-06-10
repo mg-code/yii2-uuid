@@ -1,8 +1,8 @@
 {
-    "name": "mg-code/yii2-uid-track",
+    "name": "mg-code/yii2-uuid",
     "description": "Tracks user actions by his unique ID",
-    "keywords": ["yii2", "extension", "user", "uid", "track"],
-    "homepage": "https://github.com/mg-code/yii2-uid-track",
+    "keywords": ["yii2", "extension", "user", "unique", "uuid", "track"],
+    "homepage": "https://github.com/mg-code/yii2-uuid",
     "type": "yii2-extension",
     "license": "BSD 3-Clause",
     "authors": [
@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "mgcode\\uidTrack\\": ""
+            "mgcode\\uuid\\": ""
         }
     }
 }
