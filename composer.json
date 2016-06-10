@@ -1,0 +1,24 @@
+{
+    "name": "mg-code/yii2-uid-track",
+    "description": "Tracks user actions by his unique ID",
+    "keywords": ["yii2", "extension", "user", "uid", "track"],
+    "homepage": "https://github.com/mg-code/yii2-uid-track",
+    "type": "yii2-extension",
+    "license": "BSD 3-Clause",
+    "authors": [
+        {
+            "name": "Maris Graudins",
+            "role": "Developer"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "yiisoft/yii2": "*"
+        "mg-code/yii2-helpers": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "mgcode\\uidTrack\\": ""
+        }
+    }
+}
