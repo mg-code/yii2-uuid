@@ -1,2 +1,2 @@
-# yii2-uid-track
+# yii2-uuid
 Tracks user actions by his unique ID
