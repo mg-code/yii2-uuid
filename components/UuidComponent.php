@@ -7,14 +7,15 @@ use \Yii;
 use yii\base\Component;
 use yii\base\InvalidParamException;
 use yii\db\Expression;
+use yii\db\Query;
 use yii\web\Cookie;
 
 /**
- * @link https://github.com/mg-code/yii2-uid-track
+ * @link https://github.com/mg-code/yii2-uuid
  * @author Maris Graudins <maris@mg-interactive.lv>
  * @property string $uuid
  */
-class TrackComponent extends Component
+class UuidComponent extends Component
 {
     /**
      * @var string
@@ -43,13 +44,13 @@ class TrackComponent extends Component
             return $this->_uuid;
         }
 
-        if($uid = Yii::$app->request->cookies->getValue($this->cookieName)) {
-            $this->_uuid = (string) $uid;
+        if($uuid = Yii::$app->request->cookies->getValue($this->cookieName)) {
+            $this->_uuid = (string) $uuid;
             return $this->_uuid;
         }
 
-        $uid = NumberHelper::getGuid();
-        $this->setUuid($uid);
+        $uuid = NumberHelper::getGuid();
+        $this->setUuid($uuid);
         return $this->_uuid;
     }
 
@@ -69,13 +70,13 @@ class TrackComponent extends Component
     }
 
     /**
-     * Tracks user action
+     * Tracks user event
      * @param string $action
      * @param null|int $target
      * @param null|string $value
      * @throws \yii\db\Exception
      */
-    public function track($action, $target = null, $value = null)
+    public function trackEvent($action, $target = null, $value = null)
     {
         if(strlen($action) > $this->actionNameLength) {
             throw new InvalidParamException('Action name is too long.');
@@ -88,5 +89,36 @@ class TrackComponent extends Component
             'value' => $value,
             'created' => new Expression('NOW()'),
         ])->execute();
+    }
+
+    /**
+     * Counts user tracked events.
+     * False means, that attribute will not be used.
+     * Null values can be used.
+     * @param mixed $action
+     * @param mixed $target
+     * @param mixed $value
+     * @return int
+     */
+    public function countEvents($action = false, $target = false, $value = false)
+    {
+        $query = (new Query())
+            ->select('COUNT(*)')
+            ->from('uuid_event')
+            ->where(['uuid' => $this->getUuid()]);
+
+        if($action !== false) {
+            $query->andWhere(['action' => $action]);
+        }
+
+        if($target !== false) {
+            $query->andWhere(['target' => $target]);
+        }
+
+        if($value !== false) {
+            $query->andWhere(['value' => $value]);
+        }
+
+        return (int) $query->scalar();
     }
 }
