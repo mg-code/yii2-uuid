@@ -92,7 +92,7 @@ class UuidComponent extends Component
             'action' => $action,
             'target' => $target,
             'value' => $value,
-            'created' => new Expression('NOW()'),
+            'datetime' => new Expression('NOW()'),
         ])->execute();
     }
 
