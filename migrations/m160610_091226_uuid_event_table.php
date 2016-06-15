@@ -20,7 +20,7 @@ class m160610_091226_uuid_event_table extends Migration
               `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY (`id`),
               INDEX `I_uuid_action_target` USING BTREE (`uuid` ASC, `action` ASC, `target` ASC))
-            ENGINE = MyISAM
+            ENGINE = InnoDB
             DEFAULT CHARACTER SET = utf8
             COLLATE = utf8_general_ci;
         ");

@@ -17,7 +17,7 @@ class m160610_091326_uuid_param_table extends Migration
               `value` TEXT NULL,
               `datetime` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
               PRIMARY KEY (`uuid`, `param`))
-            ENGINE = MyISAM
+            ENGINE = InnoDB
             DEFAULT CHARACTER SET = utf8
             COLLATE = utf8_general_ci;
         ");
@@ -30,7 +30,7 @@ class m160610_091326_uuid_param_table extends Migration
 
     public function down()
     {
-        echo "m160610_091226_uuid_event_table cannot be reverted.\n";
+        echo "m160610_091326_uuid_param_table cannot be reverted.\n";
 
         return false;
     }
