@@ -65,10 +65,12 @@ class UuidComponent extends Component
      */
     public function setUuid($uuid)
     {
-        $params = array_merge($this->cookieParams, [
+        $params = array_merge([
             'name' => $this->cookieName,
             'value' => $uuid,
-        ]);
+            'expire' => strtotime('+2 years'),
+        ], $this->cookieParams);
+
         $cookie = new Cookie($params);
         Yii::$app->response->cookies->add($cookie);
         $this->_uuid = $uuid;
