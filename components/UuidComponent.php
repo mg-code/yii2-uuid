@@ -99,6 +99,24 @@ class UuidComponent extends Component
     }
 
     /**
+     * Groups event targets by action and returns count.
+     *
+     * @param $action
+     * @return array
+     */
+    public function groupEventTargets($action)
+    {
+        $query = (new Query())
+            ->select(['target', 'COUNT(*) as count'])
+            ->from('uuid_event')
+            ->where(['uuid' => $this->getUuid()])
+            ->andWhere(['action' => $action])
+            ->groupBy(['target']);
+
+        return $query->all();
+    }
+
+    /**
      * Counts user tracked events.
      * False means, that attribute will not be used.
      * Null values can be used.
