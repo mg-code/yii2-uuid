@@ -101,10 +101,11 @@ class UuidComponent extends Component
     /**
      * Groups event targets by action and returns count.
      *
-     * @param $action
+     * @param mixed $action
+     * @param bool $orderByCount Orders by count. Default: false
      * @return array
      */
-    public function groupEventTargets($action)
+    public function groupEventTargets($action, $orderByCount = false)
     {
         $query = (new Query())
             ->select(['target', 'COUNT(*) as count'])
@@ -112,6 +113,10 @@ class UuidComponent extends Component
             ->where(['uuid' => $this->getUuid()])
             ->andWhere(['action' => $action])
             ->groupBy(['target']);
+
+        if($orderByCount) {
+            $query->orderBy(['count' => SORT_DESC]);
+        }
 
         return $query->all();
     }
